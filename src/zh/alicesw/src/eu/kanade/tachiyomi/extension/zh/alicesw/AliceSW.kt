@@ -13,6 +13,7 @@ import keiyoushi.network.get
 import keiyoushi.source.KeiSource
 import keiyoushi.utils.SlugPath
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Response
 import org.jsoup.nodes.Document
 
@@ -34,7 +35,12 @@ abstract class AliceSW :
 
     override suspend fun getSearchMangaList(page: Int, query: String, filters: FilterList): MangasPage {
         if (query.isBlank()) return getPopularManga(page)
-        return parseMangaList(client.get("$baseUrl/search.html?q=$query&f=title&page=$page", headers))
+        val url = "$baseUrl/search.html".toHttpUrl().newBuilder()
+            .addQueryParameter("q", query)
+            .addQueryParameter("f", "title")
+            .addQueryParameter("page", page.toString())
+            .build()
+        return parseMangaList(client.get(url, headers))
     }
 
     private fun parseMangaList(response: Response): MangasPage {
