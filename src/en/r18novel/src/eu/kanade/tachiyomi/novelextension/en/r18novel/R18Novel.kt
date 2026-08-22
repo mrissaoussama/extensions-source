@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.r18novel
+package eu.kanade.tachiyomi.novelextension.en.r18novel
 
 import eu.kanade.tachiyomi.multisrc.readnovelfull.ReadNovelFull
 import keiyoushi.annotation.Source
