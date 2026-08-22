@@ -16,4 +16,9 @@ keiyoushi {
         baseUrl = "https://www.r18novel.com"
         lang = "en"
     }
+
+    deeplink {
+        host("www.r18novel.com")
+        path("/webnovel/..*")
+    }
 }
