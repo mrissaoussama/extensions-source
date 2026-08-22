@@ -1,0 +1,11 @@
+ext {
+    extName = 'Novel-Bin (com)'
+    extClass = '.NovelBinCom'
+    themePkg = 'readnovelfull'
+    baseUrl = 'https://novel-bin.com'
+    overrideVersionCode = 0
+    isNsfw = false
+    isNovel = true
+}
+
+apply plugin: "ns.plugins.extension.legacy"
