@@ -1,4 +1,5 @@
 ext {
+    libVersion = '1.6'
     extName = 'Novel-Bin (com)'
     extClass = '.NovelBinCom'
     themePkg = 'readnovelfull'
