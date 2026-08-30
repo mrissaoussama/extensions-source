@@ -49,7 +49,7 @@ abstract class AliceSW :
 
         val mangas = document.select("a[href~=^/novel/\\d+\\.html$]").mapNotNull { element ->
             val href = element.attr("href")
-            val title = element.text().trim()
+            val title = element.text()
             if (title.isBlank() || !seen.add(href)) return@mapNotNull null
 
             SManga.create().apply {
@@ -87,14 +87,12 @@ abstract class AliceSW :
     }
 
     private fun parseMangaDetails(document: Document, manga: SManga): SManga {
-        // The only <p> under .jianjie is the real synopsis; everything else there is the
-        // site's rotating age-disclaimer banner.
-        val description = document.selectFirst(".jianjie p")?.text()?.trim()
+        val description = document.selectFirst(".jianjie p")?.text()
 
         val category = document.select("a[href*=\"/lists/\"]")
-            .map { it.text().trim() }
+            .map { it.text() }
             .firstOrNull { it.isNotBlank() && it != "首页" }
-        val tags = document.select("a[href*=\"f=tag\"]").map { it.text().trim() }.filter { it.isNotBlank() }
+        val tags = document.select("a[href*=\"f=tag\"]").map { it.text() }.filter { it.isNotBlank() }
 
         val pageText = document.text()
         val status = when {
@@ -107,8 +105,8 @@ abstract class AliceSW :
 
         return SManga.create().apply {
             url = manga.url
-            title = document.selectFirst(".novel_title")?.text()?.trim() ?: manga.title
-            author = document.selectFirst("a[href*=\"f=author\"]")?.text()?.trim()
+            title = document.selectFirst(".novel_title")?.text() ?: manga.title
+            author = document.selectFirst("a[href*=\"f=author\"]")?.text()
             genre = (listOfNotNull(category) + tags).joinToString(", ")
             this.status = status
             this.description = description
@@ -123,7 +121,7 @@ abstract class AliceSW :
 
         return document.select("ul.mulu_list li a").mapIndexedNotNull { index, element ->
             val href = element.attr("href")
-            val name = element.text().trim()
+            val name = element.text()
             if (href.isBlank() || name.isBlank()) return@mapIndexedNotNull null
 
             SChapter.create().apply {
@@ -139,6 +137,7 @@ abstract class AliceSW :
     override suspend fun fetchPageText(page: Page): String {
         val document = client.get(page.url, headers).asJsoup()
         val content = document.selectFirst(".j_readContent") ?: document.selectFirst(".read-content")
-        return content?.html().orEmpty()
+            ?: throw Exception("Chapter content not found")
+        return content.html()
     }
 }
