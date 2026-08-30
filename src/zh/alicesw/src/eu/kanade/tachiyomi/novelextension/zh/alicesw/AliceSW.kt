@@ -25,9 +25,9 @@ abstract class AliceSW :
     private val mangaPath = SlugPath("/novel/", ".html")
     private val chapterPath = SlugPath("/book/", ".html")
 
-    override fun getMangaUrl(manga: SManga): String = baseUrl + mangaPath.resolve(manga.url)
+    override fun getMangaUrl(manga: SManga): String = mangaPath.absolute(baseUrl, manga.url)
 
-    override fun getChapterUrl(chapter: SChapter): String = baseUrl + chapterPath.resolve(chapter.url)
+    override fun getChapterUrl(chapter: SChapter): String = chapterPath.absolute(baseUrl, chapter.url)
 
     override suspend fun getPopularManga(page: Int): MangasPage = parseMangaList(client.get("$baseUrl/all/order/hits+desc.html?page=$page", headers))
 
@@ -76,7 +76,7 @@ abstract class AliceSW :
         fetchChapters: Boolean,
     ): SMangaUpdate {
         val updatedManga = if (fetchDetails) {
-            val response = client.get(baseUrl + mangaPath.resolve(manga.url), headers)
+            val response = client.get(mangaPath.absolute(baseUrl, manga.url), headers)
             parseMangaDetails(response.asJsoup(), manga)
         } else {
             manga
@@ -132,7 +132,7 @@ abstract class AliceSW :
         }
     }
 
-    override suspend fun getPageList(chapter: SChapter): List<Page> = listOf(Page(0, baseUrl + chapterPath.resolve(chapter.url)))
+    override suspend fun getPageList(chapter: SChapter): List<Page> = listOf(Page(0, chapterPath.absolute(baseUrl, chapter.url)))
 
     override suspend fun fetchPageText(page: Page): String {
         val document = client.get(page.url, headers).asJsoup()
